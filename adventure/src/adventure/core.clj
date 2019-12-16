@@ -1,5 +1,7 @@
 (ns adventure.core
   (:gen-class))
+(require '[clojure.string :as str])
+(use '[clojure.string :only (split triml)])
 
 (def init-map
   {
@@ -11,7 +13,7 @@
            }
 
   :crack-egg-room {:desc "You can crack somg eggs here."
-            :title "in the grue pen"
+            :title "in the crack egg room"
             :dir {:north :pen}
             :contents #{}
             :requires #{:bowl :raw-egg}
@@ -58,10 +60,10 @@
 
 (defn go [state dir]
   (let [location (get-in state [:adventurer :location])
-        dest ((get-in state [:map location :dir]) (keyword dir) )]
+        dest ((get-in state [:map location :dir]) dir )]
     (if (nil? dest)
       (do (println "\nYou can't go that way.")
-          (println dir)
+          ; (println dir)
           state)
 
       (do (println "\nYou CAN go that way.")
@@ -88,12 +90,75 @@
 ;     (apply (initial-env (inc idx)) state vars)
 ;     (recur (+ idx 2))))))
 
-(defn react [state command]
+; (defn react [state command]
 
-  ; (print input-vector)
-  (go state command)
+;   ; (print input-vector)
+;   (go state command)
+
+; )
+
+(defn no-understand [state vars] 
+
+  (do 
+  
+    (print "I don't understand this!")
+    state
+  )
 
 )
+
+(defn canonicalize
+  "Given an input string, strip out whitespaces, lowercase all words, and convert to a vector of keywords."
+  [input]
+  (def output (split (clojure.string/lower-case input) #"\s+|\.+")) ;regex space or period... lol it actually worked
+
+  ;now need to clean the outputs
+  ; (map (fn [input] [str(":" input)]) output)
+
+  ; (map (fn [x] (str ":" x)) output)
+  (vec (map (fn [x] (keyword x)) output)))
+
+(defn match [pattern input]
+  (loop [pattern pattern
+    input input
+    vars '()]
+    (cond (and (empty? pattern) (empty? input)) (reverse vars)
+      (or (empty? pattern) (empty? input)) nil
+      (= (first pattern) "@")
+      (recur (rest pattern)
+      (rest input)
+      (cons (first input) vars))
+      (= (first pattern) (first input))
+      (recur (rest pattern)
+      (rest input)
+      vars)
+      :no-understand nil
+    )
+  )
+)
+  
+(def initial-env [  [:move "@"] go  
+                    [:no-understand] no-understand
+                  ])  ;; add your other functions here
+
+(defn react
+  "Given a state and a canonicalized input vector, search for a matching phrase and call its corresponding action.
+  If there is no match, return the original state and result \"I don't know what you mean.\""
+  [state input-vector]
+  (loop [idx 0]
+    (if (>= idx (count initial-env)) "I really don't know what you're talking␣
+    ,→about."
+    (if-let [vars (match (initial-env idx) input-vector)]
+    ; (apply (initial-env (inc idx)) state vars)
+    (do
+      ; (print vars)
+      (apply (initial-env (inc idx)) state vars)
+    
+    )
+    (recur (+ idx 2))
+    
+    
+    ))))
 
 (defn -main
   "Initialize the adventure"
@@ -102,12 +167,13 @@
   
   
     (let [pl (status local-state) 
-          _  (println "What do you want to do?")
+          _  (println "\nWhat do you want to do?")
           command (read-line)]
 
           (do 
           (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
-          (recur (react pl command))          
+          ; (recur (go local-state (canonicalize command)))          
+          (recur (react local-state (canonicalize command)))
 
           )
     )
