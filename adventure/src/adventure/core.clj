@@ -28,12 +28,10 @@
             :actions #{:take :crack}
              }
 
-  :chicken {:desc "This is a chicken. You can pet it for some eggs."
+  :chicken {:desc "This is a chicken. You can pet it to get an egg."
             :name "a chicken" 
             :actions #{:pet}
-            }
-            
-            
+            }          
   })
 
 (def init-adventurer
@@ -66,9 +64,19 @@
           ; (println dir)
           state)
 
-      (do (println "\nYou CAN go that way.")
-          (assoc-in state [:adventurer :location] dest))
-      )))
+      (if (every? (get-in state [:adventurer :inventory]) (get-in state [:map dest :requires]) ) 
+      (do
+        (println "\nYou CAN go that way.")
+        (assoc-in state [:adventurer :location] dest))
+
+        (do (println "You don't have the required objects to go in there.") state) 
+      ) 
+      
+      
+      
+      )
+      ))
+
 
 
 (defn status [state]
