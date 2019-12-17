@@ -146,8 +146,11 @@
   If there is no match, return the original state and result \"I don't know what you mean.\""
   [state input-vector]
   (loop [idx 0]
-    (if (>= idx (count initial-env)) "I really don't know what you're talking␣
-    ,→about."
+    (if (>= idx (count initial-env)) 
+    (do
+      (print "I really don't know what you're talking about.\n")
+      state
+    )
     (if-let [vars (match (initial-env idx) input-vector)]
     ; (apply (initial-env (inc idx)) state vars)
     (do
@@ -171,7 +174,7 @@
           command (read-line)]
 
           (do 
-          (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
+          ; (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
           ; (recur (go local-state (canonicalize command)))          
           (recur (react local-state (canonicalize command)))
 
