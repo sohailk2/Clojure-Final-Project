@@ -1,1 +1,1 @@
-# L of a project.
+# Egg game thing.
