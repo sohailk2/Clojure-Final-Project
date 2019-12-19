@@ -82,10 +82,37 @@
 (defn status [state]
   (let [location (get-in state [:adventurer :location])
         the-map (:map state)]
-    (print (str "You are " (-> the-map location :title) ". "))
+    (print (str "\nYou are " (-> the-map location :title) ". "))
     (when-not ((get-in state [:adventurer :seen]) location)
       (print (-> the-map location :desc)))
     (update-in state [:adventurer :seen] #(conj % location))))
+
+(defn describeState [state]
+
+  ; (status state)
+
+  (let [location (get-in state [:adventurer :location])
+        the-map (:map state)]
+    (print (str "The objects in the scene are" (-> the-map location :title) ". "))
+    (when-not ((get-in state [:adventurer :seen]) location)
+      (print (-> the-map location :desc)))
+    (update-in state [:adventurer :seen] #(conj % location)))
+  
+  state
+
+)
+
+(defn describeObject [state object]
+
+  ; (status state)
+
+  (do 
+    (print "Describe objects")
+    state
+  )
+  
+
+)
 
 ; (defn react
 ;   "Given a state and a canonicalized input vector, search for a matching phrase and call its corresponding action.
@@ -145,7 +172,9 @@
   )
 )
   
-(def initial-env [  [:move "@"] go  
+(def initial-env [  [:move "@"] go
+                    [:describe] describeState
+                    [:describe "@"] describeObject 
                     [:no-understand] no-understand
                   ])  ;; add your other functions here
 
