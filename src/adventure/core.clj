@@ -250,8 +250,7 @@
   )
 )
   
-(def initial-env [  
-					; [:move "@"] go
+(def initial-env [ 	[:move "@"] go
 					["@"] go ;TODO n vs north vs go north
 					[:go "@"] go 
                     [:describe] describeState
@@ -272,6 +271,7 @@
 					[:pet :chicken] pet-chicken ;TODO do we need this function
 
                   ])  ;; add your other functions here
+					
 
 (defn react
   "Given a state and a canonicalized input vector, search for a matching phrase and call its corresponding action.
