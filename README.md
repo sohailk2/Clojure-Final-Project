@@ -23,11 +23,16 @@ FIXME: listing of options this app accepts.
 ...
 
 ## To Do:
-- [ ] Describe Room
+- [x] Describe Room
 - [ ] Take Items
 - [ ] Crack Eggs
-- [ ] Add all rooms
+- [x] Add all rooms
 - [ ] Exit function
+- [ ] Create user functions
+- [ ] Create win condition
+- [ ] Create loss condition
+- [ ] Make sure go works
+- [ ] Make sure main, react, repl and match work
 
 ### Bugs
 
