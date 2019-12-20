@@ -12,7 +12,7 @@
 				  :north :garden
 				  :east :kitchen
 				  :west :preperation-room}
-			:contents #{:raw-egg :chicken}
+			:contents #{:raw-egg}
 			:suspicion -2
 			}
 
@@ -86,19 +86,46 @@
 
 (def init-items
  {
-   :raw-egg {:desc "This is a raw egg.  You probably want to cook it before eating it."
+   	:raw-egg {:desc "This is a raw egg. You probably want to cook it before eating it."
             :name "a raw egg"
-            :actions #{:take :crack}
-             }
+            ; :actions #{:take :crack}
+			}
+	:cilantro {:desc "A bunch of leafy green cilantro. You should probably wash it, before eating it."
+			:name "a bunch of cilantro"
+		}
+	:onion {:desc "A cute sprig of spring onion. You should probably wash it, before eating it."
+			:name "a spring onion"
+		}
+	:tomato {:desc "A bright red tomato. You should probably wash it, before eating it."
+			:name "a tomato"
+		}
+	:bowl {:desc "A bowl. Perfect for cracking an egg into *hint hint*"
+			:name "a bowl"
+		}
+	:fork {:desc "A fork. Perfect for beating an egg into *hint hint*"
+			:name "a fork"
+		}
+	:cracked-egg {:desc "A bowl with egg in it. You should probably beat it before cooking it. Definetly cook it before eating it though."
+			:name "a bowl with egg in it"
+		}
+	:beat-egg {:desc "A bowl with a cleanly beaten egg in it. You DEFINETLY have to cook it before you eat."
+			:name "a bowl with a whisked egg"
+		}
+	:prepared-vegetables {:desc "A bunch on finely chopped vegetables. Not really sure how you're carrying these"
+			:name "a blend of chopped vegetables"
+		}
+	:omelette {:desc "A delicious omelette. You probably want to sit down at a fancy table and eat this gorgeous result of all your effort."
+			:name "a delicious omelette"
+		}
 
-  :chicken {:desc "This is a chicken. You can pet it to get an egg."
-            :name "a chicken" 
-            :actions #{:pet}
-            }          
+;   :chicken {:desc "This is a chicken. You can pet it to get an egg."
+;             :name "a chicken" 
+;             :actions #{:pet}
+;             }          
   })
 
 (def init-adventurer
-  {:location :crack-egg-room
+  {:location :pen
    :inventory #{}
    :tick 0
    :seen #{}
@@ -133,10 +160,10 @@
         (println "\nYou CAN go that way.")
         (assoc-in state [:adventurer :location] dest)
 		(assoc-in state [:adventurer :suspicion] (+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) ;adventurer->suspicion = adventurer->suspicion + room->suspicion
-		;TODO check if suspicion is too high
 		(assoc-in state [:adventurer :tick] (+ (get-in state [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
-		(assoc-in state [:adventurer :seen] ) ;TODO Update adventurer->seen 
+		(assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
 	  	state
+		;TODO check if suspicion is too high
 	  )
 	)
 
