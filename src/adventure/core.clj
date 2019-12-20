@@ -5,8 +5,7 @@
 
 (def init-map
 	{
-	:pen {:desc "The ground is muddy and covered with Hay and Straw. There is a chicken that looks at you inquisitevely 
-				and with affection(?). It sits above a pale yellow egg. It looks strangely familiar. It soothes you."
+	:pen {:desc "The ground is muddy and covered with Hay and Straw. There is a chicken that looks at you inquisitevely and with affection(?). It sits above a pale yellow egg. It looks strangely familiar. It soothes you."
 			:title "in the Pen"
 			:dir {:south :crack-egg-room
 				  :north :garden
@@ -25,29 +24,21 @@
 			:suspicion 2
 			}
 
-	:garden {:desc "Fully grown vegetables sprawl around you in every direction as far as you can see. Neatly arranged, 
-				you see Cilantro on your left, Spring Onions in front of you, and Tomatoes to your right. The green makes you feel calm."
+	:garden {:desc "Fully grown vegetables sprawl around you in every direction as far as you can see. Neatly arranged, you see Cilantro on your left, Spring Onions in front of you, and Tomatoes to your right. The green makes you feel calm."
 			:title "in the garden"
 			:dir {:south :pen}
 			:contents #{:cilantro :onion :tomato}
 			:suspicion -1
 	}
 
-	:dining-room {:desc "You see a giant table strech the legnth of the room. A single throne-like chair sits at the head. 
-					 In the center is a pristine glass sculpture of an egg.
-					 You look up and see a large dome extend from the middle of the cieling. 
-					 Grand paintings depicting people from different eras interacting with chickens spread across the whole cieling. 
-					 From the center of the dome descends an ornate chandelier studded with magnificent stones, each one precicesly cut. 
-					 The grandiose makes you uncomfortable"
+	:dining-room {:desc "You see a giant table strech the legnth of the room. A single throne-like chair sits at the head. In the center is a pristine glass sculpture of an egg.You look up and see a large dome extend from the middle of the cieling. Grand paintings depicting people from different eras interacting with chickens spread across the whole cieling. From the center of the dome descends an ornate chandelier studded with magnificent stones, each one precicesly cut. The grandiose makes you uncomfortable"
 			:title "in the dining room"
 			:dir {:west :kitchen}
 			:contents #{}
 			:suspicion +2
 	}
 
-	:kitchen {:desc "You are glad to see a room that looks familiar. However, it seems barren, save a few objects.
-				There is a single flame stove, with a non-stick pan (that seems stuck to the stove) resting on top. 
-				In the pan is just a little bit of oil. Next to it is a kitchen timer, going up to 3 minutes."
+	:kitchen {:desc "You are glad to see a room that looks familiar. However, it seems barren, save a few objects.There is a single flame stove, with a non-stick pan (that seems stuck to the stove) resting on top. In the pan is just a little bit of oil. Next to it is a kitchen timer, going up to 3 minutes."
 			:title "in the kitchen"
 			:dir {:west :pen
 				  :east :dining-room}
@@ -55,21 +46,14 @@
 			:suspicion 0
 	}
 
-	:cutlery-room {:desc "You open the door to a small room that reaches just above your head. It looks similar to a pantry.
-					It is lined with shelves, each seperated from the next by about a foot, 5 in total. 
-					Each row has either bowls or forks, in an alternating fashion. 
-					You are more amused by the fact that everytime you open the door, 
-						you hear a *click* synchronous with the light turning on, and vice-versa when you close it. 
-					You attempt to close the door very slowly to find the exact point at which the switch happens." ;pantry
+	:cutlery-room {:desc "You open the door to a small room that reaches just above your head. It looks similar to a pantry.It is lined with shelves, each seperated from the next by about a foot, 5 in total. Each row has either bowls or forks, in an alternating fashion. You are more amused by the fact that everytime you open the door, you hear a *click* synchronous with the light turning on, and vice-versa when you close it. You attempt to close the door very slowly to find the exact point at which the switch happens." ;pantry
 			:title "looking into the cutlery room"
 			:dir {:north :crack-egg-room}
 			:contents #{:bowl :fork}
 			:suspicion -1
 	}
 
-	:preperation-room {:desc "The room is uncomfortably empty. The walls are a ghostly white. 
-						In the center is a counter, with a sink and a cutting board. 
-						It seems like you can wash and cut vegetables in here."
+	:preperation-room {:desc "The room is uncomfortably empty. The walls are a ghostly white. In the center is a counter, with a sink and a cutting board. It seems like you can wash and cut vegetables in here."
 			:title "in the preperation room"
 			:dir {:east :pen}
 			:contents #{}
@@ -266,10 +250,27 @@
   )
 )
   
-(def initial-env [  [:move "@"] go
+(def initial-env [  
+					; [:move "@"] go
+					["@"] go ;TODO n vs north vs go north
+					[:go "@"] go 
                     [:describe] describeState
                     [:describe "@"] describeObject 
                     [:no-understand] no-understand
+					[:take "@"] pick-up
+					[:drop "@"] drop
+					[:look] describeState
+					[:examine "@"] describeObject
+					[:quit] quit
+					[:i] display-inventory
+					[:inventory] display-inventory
+					[:crack :egg] crack-egg
+					[:prepare :vegetables] prepare-vegetables
+					[:beat :egg] beat-egg
+					[:cook :egg] cook-egg
+					[:eat :egg] eat-egg
+					[:pet :chicken] pet-chicken ;TODO do we need this function
+
                   ])  ;; add your other functions here
 
 (defn react

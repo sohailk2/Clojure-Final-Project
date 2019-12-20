@@ -12,7 +12,7 @@ FIXME: explanation
 
 ~~$ java -jar adventure-0.1.0-standalone.jar [args]~~
 
-    $ lein repl
+    $ lein run
 
 ## Options
 
