@@ -118,6 +118,7 @@
    })
 
 
+
 ; movement code
 
 
@@ -142,11 +143,14 @@
     ;   (if (every? (get-in state [:adventurer :inventory]) (get-in state [:map dest :requires]) ) 
       (do
         (println "\nYou CAN go that way.")
-        (assoc-in state [:adventurer :location] dest)
-		(assoc-in state [:adventurer :suspicion] (+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) ;adventurer->suspicion = adventurer->suspicion + room->suspicion
-		(assoc-in state [:adventurer :tick] (+ (get-in state [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
-		(assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
-	  	state
+		(print dest)
+        
+		 ;adventurer->suspicion = adventurer->suspicion + room->suspicion
+		(assoc-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick] (+ (get-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
+		; (assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
+	  	
+
+		
 		;TODO check if suspicion is too high
 	  )
 	)
@@ -249,27 +253,67 @@
     )
   )
 )
+
+(defn describeDirections [state]
+
+	(let [directions (get-in state [:map (get-in state [:adventurer :location]) :dir])]
+		(print directions)
+		state
+	)
+
+)
+
+(defn pick-up [state object]
+
+	; if object is in the current rooms things then pick it up
+	(let [objectsInRoom (get-in state [:map (get-in state [:adventurer :location]) :contents])]
+		(if (contains? objectsInRoom object)
+		
+			(do 
+				(print object " has been picked up!")
+				(update-in state [:adventurer :inventory] #(conj % object))
+			)
+
+			(do
+				(print "This object can not be picked up.")			
+				state
+			)
+
+		)
+	)
+)
+
+(defn display-inventory [state]
+
+	(do 
+		(print "Inventory: " (get-in state [:adventurer :inventory]))
+		state
+	)
+
+)
+
   
 (def initial-env [  
 					; [:move "@"] go
-					["@"] go ;TODO n vs north vs go north
+					; ["@"] go ;TODO n vs north vs go north
 					[:go "@"] go 
                     [:describe] describeState
+					[:directions] describeDirections
                     [:describe "@"] describeObject 
                     [:no-understand] no-understand
 					[:take "@"] pick-up
-					[:drop "@"] drop
-					[:look] describeState
-					[:examine "@"] describeObject
-					[:quit] quit
+					; [:drop "@"] drop
+					; [:look] describeState
+					; [:examine "@"] describeObject
+					; [:quit] quit
 					[:i] display-inventory
-					[:inventory] display-inventory
-					[:crack :egg] crack-egg
-					[:prepare :vegetables] prepare-vegetables
-					[:beat :egg] beat-egg
-					[:cook :egg] cook-egg
-					[:eat :egg] eat-egg
-					[:pet :chicken] pet-chicken ;TODO do we need this function
+					; [:inventory] display-inventory
+					; [:crack :egg] crack-egg
+					; [:prepare :vegetables] prepare-vegetables
+					; [:beat :egg] beat-egg
+					; [:cook :egg] cook-egg
+					; [:eat :egg] eat-egg
+					; [:pet :chicken] pet-chicken ;TODO do we need this function
 
                   ])  ;; add your other functions here
 
@@ -307,9 +351,9 @@
 
           (do 
           ; (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
-          ; (recur (go local-state (canonicalize command)))          
+          ; (recur (go local-state (canonicalize command))) 
+			
           (recur (react local-state (canonicalize command)))
-
           )
     )
 
