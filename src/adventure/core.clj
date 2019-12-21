@@ -4,6 +4,9 @@
 (require 'clojure.string)
 (use '[clojure.string :only (split triml capitalize)])
 
+; (declare help)
+(declare initial-env)
+
 (def init-map
 	{
 	:pen {:desc "The ground is muddy and covered with Hay and Straw. There is a chicken that looks at you inquisitevely and with affection(?). It sits above a pale yellow egg. It looks strangely familiar. It soothes you."
@@ -488,6 +491,21 @@
 )))
   
 
+(defn help [state]
+	(do 
+		(println "You can do any of the following. \n Replace @ with the relevant object. You don't need to type the : before every word")
+		(loop [idx 0]
+			(if (>= idx (count initial-env)) 
+			state
+			(do 
+				(println (initial-env idx))
+				(recur (+ idx 2))
+			)
+			
+    
+    	))
+	)
+)
   
 (def initial-env [  
 					; [:move "@"] go
@@ -515,21 +533,6 @@
                   ])  ;; add your other functions here
 					
 
-(defn help
-	(do 
-		(println "You can do any of the following. \n Replace @ with the relevant object. You don't need to type the : before every word")
-		(loop [idx 0]
-			(if (>= idx (count initial-env)) 
-			state
-			(do 
-				(println (initial-env idx))
-				(recur (+ idx 2))
-			)
-			
-    
-    	))
-	)
-)
 
 (defn react
   "Given a state and a canonicalized input vector, search for a matching phrase and call its corresponding action.
