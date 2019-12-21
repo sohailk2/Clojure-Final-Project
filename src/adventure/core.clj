@@ -333,7 +333,7 @@
 		(if (contains? objectsInRoom object)
 		
 			(do 
-				(print object " has been picked up!")
+				(print (name object) "has been picked up!")
 				(if (= object :raw-egg) 
 					(update-in (update-in state [:adventurer :eggs-recieved] inc) [:adventurer :inventory] #(conj % object))
 					(update-in state [:adventurer :inventory] #(conj % object)))
@@ -341,7 +341,7 @@
 			)
 
 			(do
-				(print "This object can not be picked up.")			
+				(print (format "You dont see any %s around" (name object)))			
 				state
 			)
 
@@ -364,7 +364,7 @@
 		(if (contains? objectsInInventory object)
 		
 			(do 
-				(print object " has been dropped from the inventory.")
+				(print object " has been dropped from the inventory. It hits the ground and disappears into thin air.")
 				(update-in state [:adventurer :inventory] #(disj % object))
 			)
 
@@ -565,6 +565,8 @@
 					[:beat :egg] beat-egg ; need bowl cracked-egg in beat-egg-room -> beat-egg
 					[:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
 					[:eat :egg] eat-egg ; need omolette fork in dining room -> then set staus to won!
+					[:pick :up "@"] pick-up
+					[:pickup "@"] pick-up
 					; [:pet :chicken] pet-chicken ; adds eggs to your inventory
 
                   ])  ;; add your other functions here
