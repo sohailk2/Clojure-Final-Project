@@ -216,18 +216,37 @@
       (print (-> the-map location :desc)))
     (update-in state [:adventurer :seen] #(conj % location))))
 
+(defn objects-in-scene [state]
+
+	(println "\nIn this room, the following objects can be interacted with:")
+  	(doseq [item (get-in state [:map (get-in state [:adventurer :location]) :contents])] (print item " "))
+	state
+)
+
+(defn describeDirections [state]
+
+	(println "\nIn this room, these are the following directions you can move in:")
+  	(doseq [item (get-in state [:map (get-in state [:adventurer :location]) :dir])] (print item " "))
+	state
+
+)
+
 (defn describeState [state]
 
   ; (status state)
 
   (let [location (get-in state [:adventurer :location])
         the-map (:map state)]
-    (println (str "The objects in the scene are " (-> the-map location :contents) ". "))
     (print (-> the-map location :desc)))
-  
-  state
+	; (println (str "The objects in the scene are " (-> the-map location :contents) ". "))
+	(objects-in-scene state)
+	(describeDirections state)
+  	state
 
 )
+
+
+
 
 (defn describeObject [state object]
 
@@ -305,14 +324,7 @@
   )
 )
 
-(defn describeDirections [state]
 
-	(let [directions (get-in state [:map (get-in state [:adventurer :location]) :dir])]
-		(print directions)
-		state
-	)
-
-)
 
 (defn pick-up [state object]
 
@@ -536,7 +548,7 @@
 					; ["@"] go ;TODO n vs north vs go north
 					[:help] help
 					[:go "@"] go 
-					
+					[:describe :objects] objects-in-scene
                     [:describe] describeState
 					[:directions] describeDirections
                     [:describe "@"] describeObject 
