@@ -110,7 +110,7 @@
 
 (def init-adventurer
   {:location :pen
-   :inventory #{}
+   :inventory #{:prepared-vegetables :cracked-egg}
    :tick 0
    :seen #{}
    :suspicion 0
@@ -325,7 +325,7 @@
 			
 
 				(do
-					(print "Rae eggs have turned into cracked eggs. ")
+					(print "Raw eggs have turned into cracked eggs. ")
 					;raw-egg -> cracked egg
 					(update-in (update-in state [:adventurer :inventory] #(disj % :raw-egg)) [:adventurer :inventory] #(conj % :cracked-egg))
 				)
@@ -379,6 +379,37 @@
 	)
 
 )
+
+
+(defn beat-egg [state]
+
+	;need beat-egg and prepared-vegetables in kitchen -> omelette
+
+	(if (every? (get-in state [:adventurer :inventory]) #{:prepared-vegetables :cracked-egg})
+	
+		(if (= (get-in state [:adventurer :location]) :beat-egg-room) 
+
+			(do
+				(print "You now have beat eggs.")	  
+				(update-in (update-in state [:adventurer :inventory] #(disj % :prepared-vegetables :cracked-egg)) [:adventurer :inventory] #(conj % :beat-egg))
+			)
+
+			(do
+				(print "You are not in the right room to beat your eggs.")
+				state
+			)
+
+		)
+		
+
+		(do
+		   (print "You don't have all the ingredients to beat your eggs.")
+		   state
+		)
+	
+	)
+
+)
   
 (def initial-env [  
 					; [:move "@"] go
@@ -397,7 +428,7 @@
 					[:inventory] display-inventory
 					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
 					[:prepare :vegetables] prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
-					; [:beat :egg] beat-egg ; need cracked-egg in beat-egg-room -> beat-egg
+					[:beat :egg] beat-egg ; need cracked-egg in beat-egg-room -> beat-egg
 					; [:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
 					; [:eat :egg] eat-egg ; need omolette bowl fork in dining room -> then set staus to won!
 					; [:pet :chicken] pet-chicken ; adds eggs to your inventory
