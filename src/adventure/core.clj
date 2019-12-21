@@ -548,10 +548,15 @@
 		
 			(if (= (get-in local-state [:adventurer :status]) :dead)
 
-				(print "THE GAME IS OVER. YOU DIED / EXITED.")
+				(do 
+					(println "THE GAME IS OVER. YOU DIED / EXITED.")
+					(println (get-in local-state [:adventurer :tick]) " moves taken.")
+				)
 
 				(if (= (get-in local-state [:adventurer :status]) :won) 
-					(print "\nYOU WON")
+					(do 
+						(print "\nYOU WON in " (get-in local-state [:adventurer :tick]) " moves.")
+					)
 					(do
 						(status local-state)
 						(println "\nWhat do you want to do?") 
