@@ -149,7 +149,7 @@
 		(assoc-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick] (+ (get-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
 		; (assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
 	  	
-		
+
 		
 		;TODO check if suspicion is too high
 	  )
@@ -292,6 +292,26 @@
 
 )
 
+(defn drop [state object]
+
+	(let [objectsInInventory (get-in state [:adventurer :inventory])]
+		(if (contains? objectsInInventory object)
+		
+			(do 
+				(print object " has been dropped from the inventory.")
+				(update-in state [:adventurer :inventory] #(disj % object))
+			)
+
+			(do
+				(print "This object is not in your inventory. Not dropped")			
+				state
+			)
+
+		)
+	)	
+
+)
+
   
 (def initial-env [  
 					; [:move "@"] go
@@ -302,7 +322,7 @@
                     [:describe "@"] describeObject 
                     [:no-understand] no-understand
 					[:take "@"] pick-up
-					; [:drop "@"] drop
+					[:drop "@"] drop
 					; [:look] describeState
 					; [:examine "@"] describeObject
 					; [:quit] quit
