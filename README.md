@@ -4,7 +4,7 @@
 
 ## Description of Game:
 We decided to make an omolette cooking simulator. 
-The purpose of this game is to collect the right ingredients to make an omlette.
+The purpose of this game is to collect the right ingredients to make an omelette.
 However, in doing this you should be careful not to invoke too much suspicion, else you... DIE!
 
 ### Features:
