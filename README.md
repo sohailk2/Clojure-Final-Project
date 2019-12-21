@@ -1,40 +1,45 @@
 # adventure
 
-FIXME: description
 
-## Installation
 
-Download from http://example.com/FIXME.
+## Description of Game:
+We decided to make an omolette cooking simulator. 
+The purpose of this game is to collect the right ingredients to make an omolette.
+However, in doing this you should be careful not to invoke too much suspicion, else you... DIE!
 
-## Usage
+### Features:
+* 8 Rooms: 
+    * Pen 
+    * Crack-Egg-Room 
+    * Garden 
+    * Dining-Room 
+    * Kitchen 
+    * Cutlery-Room 
+    * Preperation-Room
+    * Beat-Egg-Room
+* Objects that can be manipulated: 
+    * Raw-Egg (take, drop, crack)
+    * Cilantro (take, drop, prepare)
+    * Onion (take, drop, prepare)
+    * Tomato (take, drop, prepare)
+    * Bowl (take, drop)
+    * Fork (take, drop)
+    * Prepared-Vegetables (beat, drop)
+    * Cracked-Egg (beat, drop)
+    * Beat-Egg (cook, drop)
+    * Omellette (eat, drop) -> eating an omellete wins the game
 
-FIXME: explanation
+* Directions, Supported: (go north, go s, go right, etc...)
+    * Cardinal directions and their abbreviations
+    * Up, Down, Left, Right
 
-~~$ java -jar adventure-0.1.0-standalone.jar [args]~~
-
-    $ lein run
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-## To Do:
-- [x] Describe Room
-- [x] Add all rooms
-- [ ] Exit function
-- [ ] Create user functions
-- [ ] Take Items
-- [ ] Crack Eggs
-- [ ] Create win condition
-- [ ] Create loss condition
-- [ ] Make sure go works
-- [ ] Make sure main, react, repl and match work
-
-### Bugs
+* General Instructions:
+    * Move using 'go north, go s, go right, etc...)
+    * Look around the room using (describe, look)
+    * Pickup/Drop items using 'take, drop'
+    * View Inventory using 'inventory, i'
+    * Type 'help' to get a list of all actions performable
+    * If you really don't want to keep playing this, end game using 'quit'
 
 ...
 
