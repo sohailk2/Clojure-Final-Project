@@ -134,6 +134,13 @@
 ;   )
 ; )
 
+(defn quit [state]
+	(do
+		(println "You become extremely suspicious. You feel controlled. You look all around you, your mind running at a million-miles-an-hour. Finally you look straight ahead at...well...YOU. You punch the clear glass wall and jump out, only to get blown away into dust like at the end of (SPOILER ALERT!) Avengers: Infinity War.")
+		(println "GAME OVER")
+		(assoc-in state [:adventurer :status] :dead)
+))
+
 (defn go [state dir]
   (let [location (get-in state [:adventurer :location])
         dest ((get-in state [:map location :dir]) dir )]
@@ -149,15 +156,17 @@
 		(print (capitalize (name dest)))
         
 		 ;adventurer->suspicion = adventurer->suspicion + room->suspicion
-		(assoc-in
-			(assoc-in 
+		(if (> (+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion])) 10) 
+			(quit state)
+			(assoc-in
 				(assoc-in 
-					(assoc-in state [:adventurer :location] dest) 
-					[:adventurer :suspicion] 
-					(+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) 
-				[:adventurer :tick] 
-				(+ (get-in state [:adventurer :tick]) 1))
-			[:adventurer :seen]
+					(assoc-in 
+						(assoc-in state [:adventurer :location] dest) 
+						[:adventurer :suspicion] 
+						(+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) 
+					[:adventurer :tick] 
+					(+ (get-in state [:adventurer :tick]) 1))
+				[:adventurer :seen]
 			(conj (get-in state [:adventurer :seen]) dest)) 
 		
 		;adventurer->tick = adventurer->tick + 1
@@ -166,7 +175,7 @@
 
 		
 		;TODO check if suspicion is too high
-))))
+)))))
 
 
 
@@ -471,13 +480,6 @@
 		   (print "You don't have all the ingredients and utensils to eat your eggs.")
 		   state
 )))
-
-(defn quit [state]
-	(do
-		(println "You become extremely suspicious. You feel controlled. You look all around you, your mind running at a million-miles-an-hour. Finally you look straight ahead at...well...YOU. You punch the clear glass wall and jump out, only to get blown away into dust like at the end of (SPOILER ALERT!) Avengers: Infinity War.")
-		(println "GAME OVER")
-		(assoc-in state [:adventurer :status] :dead)
-))
 
   
 (def initial-env [  
