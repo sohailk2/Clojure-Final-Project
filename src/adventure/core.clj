@@ -115,6 +115,7 @@
    :seen #{}
    :suspicion 0
    :eggs-recieved 0
+   :status :alive
    })
 
 
@@ -312,6 +313,42 @@
 
 )
 
+(defn crack-egg [state]
+
+	; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
+
+	(if (= (get-in state [:adventurer :location]) :crack-egg-room) 
+
+		( if (contains? (get-in state [:adventurer :inventory]) :raw-egg)
+
+			
+
+				(do
+					(print "Rae eggs have turned into cracked eggs. ")
+					;raw-egg -> cracked egg
+					(update-in (update-in state [:adventurer :inventory] #(disj % :raw-egg)) [:adventurer :inventory] #(conj % :cracked-egg))
+				)
+
+				(do
+				
+					(print "You do not have any raw eggs to crack.")
+					state
+				)
+
+			
+
+		)
+
+		(do 
+			(print "You are not in the right room to crack an egg.")
+			state
+		)
+	
+	)
+
+
+)
+
   
 (def initial-env [  
 					; [:move "@"] go
@@ -323,12 +360,12 @@
                     [:no-understand] no-understand
 					[:take "@"] pick-up
 					[:drop "@"] drop
-					; [:look] describeState
+					[:look] describeState
 					; [:examine "@"] describeObject
 					; [:quit] quit
 					[:i] display-inventory
-					; [:inventory] display-inventory
-					; [:crack :egg] crack-egg
+					[:inventory] display-inventory
+					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
 					; [:prepare :vegetables] prepare-vegetables
 					; [:beat :egg] beat-egg
 					; [:cook :egg] cook-egg
@@ -365,6 +402,7 @@
   (loop [local-state {:map init-map :adventurer init-adventurer :items init-items}]
   
   
+	; restucture the print ln and move to a do loop with the recur so that you 
     (let [pl (status local-state) 
           _  (println "\nWhat do you want to do?")
           command (read-line)]
@@ -372,8 +410,21 @@
           (do 
           ; (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
           ; (recur (go local-state (canonicalize command))) 
-			
-          (recur (react local-state (canonicalize command)))
+		
+			(if (= (get-in local-state [:adventurer :status]) :dead)
+
+				(print "THE GAME IS OVER. YOU DIED / EXITED.")
+
+				(if (= (get-in local-state [:adventurer :status]) :won) 
+					(print "YOU WON")
+					(recur (react local-state (canonicalize command)))
+
+				)
+
+			)
+
+           
+
           )
     )
 
