@@ -111,7 +111,7 @@
 
 (def init-adventurer
   {:location :pen
-   :inventory #{}
+   :inventory #{:bowl :fork :omelette}
    :tick 0
    :seen #{:pen}
    :suspicion 0
@@ -204,11 +204,17 @@
 
 (defn describeObject [state object]
 
-  ; (status state)
+  
 
-  (do 
-    (print "Describe objects")
-    state
+  (if-let [object (get-in state [:items object])]
+           (do
+			   (print (get-in object [:desc]))
+			   state
+		   )
+           (do
+		   	(print "That object does not exist.")
+			state
+		   )
   )
   
 
@@ -554,9 +560,7 @@
   
   
 	; restucture the print ln and move to a do loop with the recur so that you 
-    (let [pl (status local-state) 
-          _  (println "\nWhat do you want to do?")
-          command (read-line)]
+    
 
           (do 
           ; (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
@@ -567,12 +571,16 @@
 				(print "THE GAME IS OVER. YOU DIED / EXITED.")
 
 				(if (= (get-in local-state [:adventurer :status]) :won) 
-					(print "YOU WON")
-					(recur (react local-state (canonicalize command)))
+					(print "\nYOU WON")
+					(do
+						(status local-state)
+						(println "\nWhat do you want to do?") 
+						(recur (react local-state (canonicalize (read-line))))
+					)
 
 				)
 
-)))))
+))))
 
 
 
