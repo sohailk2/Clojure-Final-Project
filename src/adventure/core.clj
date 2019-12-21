@@ -134,9 +134,36 @@
 ;   )
 ; )
 
+
+(def alternateDirs
+	{
+	:north :north
+	:n :north
+	:up :north
+
+	:south :south
+	:s :south
+	:down :south
+
+	:east :east
+	:e :east
+	:right :east
+
+	:west :west
+	:w :west
+	:left :west
+	}
+)
+
+(defn convertDir [dir]
+
+	(if-let [mapDir (get-in alternateDirs [dir])] mapDir :invalid)
+
+)
+
 (defn go [state dir]
   (let [location (get-in state [:adventurer :location])
-        dest ((get-in state [:map location :dir]) dir )]
+        dest ((get-in state [:map location :dir]) (convertDir dir) )]
     (if (nil? dest)
       (do (println "\nYou can't go that way.")
 	  	; (println state)
@@ -490,6 +517,7 @@
 					; [:move "@"] go
 					; ["@"] go ;TODO n vs north vs go north
 					[:go "@"] go 
+					
                     [:describe] describeState
 					[:directions] describeDirections
                     [:describe "@"] describeObject 
