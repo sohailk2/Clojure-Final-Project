@@ -4,6 +4,9 @@
 (require 'clojure.string)
 (use '[clojure.string :only (split triml capitalize)])
 
+; (declare help)
+(declare initial-env)
+
 (def init-map
 	{
 	:pen {:desc "The ground is muddy and covered with Hay and Straw. There is a chicken that looks at you inquisitevely and with affection(?). It sits above a pale yellow egg. It looks strangely familiar. It soothes you."
@@ -134,6 +137,12 @@
 ;   )
 ; )
 
+(defn quit [state]
+	(do
+		(println "You become extremely suspicious. You feel controlled. You look all around you, your mind running at a million-miles-an-hour. Finally you look straight ahead at...well...YOU. You punch the clear glass wall and jump out, only to get blown away into dust like at the end of (SPOILER ALERT!) Avengers: Infinity War.")
+		(println "GAME OVER")
+		(assoc-in state [:adventurer :status] :dead)
+))
 
 (def alternateDirs
 	{
@@ -176,15 +185,17 @@
 		(print (capitalize (name dest)))
         
 		 ;adventurer->suspicion = adventurer->suspicion + room->suspicion
-		(assoc-in
-			(assoc-in 
+		(if (> (+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion])) 10) 
+			(quit state)
+			(assoc-in
 				(assoc-in 
-					(assoc-in state [:adventurer :location] dest) 
-					[:adventurer :suspicion] 
-					(+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) 
-				[:adventurer :tick] 
-				(+ (get-in state [:adventurer :tick]) 1))
-			[:adventurer :seen]
+					(assoc-in 
+						(assoc-in state [:adventurer :location] dest) 
+						[:adventurer :suspicion] 
+						(+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) 
+					[:adventurer :tick] 
+					(+ (get-in state [:adventurer :tick]) 1))
+				[:adventurer :seen]
 			(conj (get-in state [:adventurer :seen]) dest)) 
 		
 		;adventurer->tick = adventurer->tick + 1
@@ -193,7 +204,7 @@
 
 		
 		;TODO check if suspicion is too high
-))))
+)))))
 
 
 
@@ -502,18 +513,28 @@
 		   (print "You don't have all the ingredients and utensils to eat your eggs.")
 		   state
 )))
+  
 
-(defn quit [state]
-	(do
-		(println "You become extremely suspicious. You feel controlled. You look all around you, your mind running at a million-miles-an-hour. Finally you look straight ahead at...well...YOU. You punch the clear glass wall and jump out, only to get blown away into dust like at the end of (SPOILER ALERT!) Avengers: Infinity War.")
-		(println "GAME OVER")
-		(assoc-in state [:adventurer :status] :dead)
-))
-
+(defn help [state]
+	(do 
+		(println "You can do any of the following. \n Replace @ with the relevant object. You don't need to type the : before every word")
+		(loop [idx 0]
+			(if (>= idx (count initial-env)) 
+			state
+			(do 
+				(println (initial-env idx))
+				(recur (+ idx 2))
+			)
+			
+    
+    	))
+	)
+)
   
 (def initial-env [  
 					; [:move "@"] go
 					; ["@"] go ;TODO n vs north vs go north
+					[:help] help
 					[:go "@"] go 
 					
                     [:describe] describeState
@@ -536,6 +557,7 @@
 
                   ])  ;; add your other functions here
 					
+
 
 (defn react
   "Given a state and a canonicalized input vector, search for a matching phrase and call its corresponding action.
