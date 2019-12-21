@@ -1,0 +1,40 @@
+exit
+(match initial-env (:move :south))
+(def initial-env [  [:move "@"] go  
+                    
+                  ])
+(match initial-env (:move :south))
+(initial-env 
+)
+(print initial-env)
+(match initial-env [:move :south])
+(canonicalize "hi how are you")
+exit
+(canonicalize "hi how are you")
+(match initial-env [:move :south])
+(match initial-env [move south])
+(match initial-env [:move :south])
+(match initial-env [move :south])
+(match initial-env [:move :south])
+(match initial-env [:move :move])
+(print initial-env )
+(println initial-env )
+(match [:move "@"] [:move :move])
+(match [:move "@"] [:move :south])
+exit
+(contains? [1 2 3] 4294967296)
+(contains? [1 2 3] 42)
+(contains? [1 2 3] [1])
+(contains? [1 2 3] 1,2)
+(contains? [1 2 3] 1)
+(some #(= 5 %) [6 7 8 9 10])
+(some #(= 5 %) [1 2 3 4 5])
+(some #((contains? [1 2 3] %) [1 2 3 4 5])
+)
+(some #(contains? [1 2 3] %) [1 2 3 4 5])
+(some #(contains? [1 2 3] %) [1 2 4 5])
+(every? #{1 2} [1 2 3])
+(every? #{1 2} #{ 1 2})
+(every? #{1 2} #{ 1 2 3})
+(every? #{1 2 3} #{ 1 2})
+exit
