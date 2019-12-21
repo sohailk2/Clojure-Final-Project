@@ -110,7 +110,7 @@
 
 (def init-adventurer
   {:location :pen
-   :inventory #{:prepared-vegetables :cracked-egg}
+   :inventory #{}
    :tick 0
    :seen #{}
    :suspicion 0
@@ -385,7 +385,7 @@
 
 	;need beat-egg and prepared-vegetables in kitchen -> omelette
 
-	(if (every? (get-in state [:adventurer :inventory]) #{:prepared-vegetables :cracked-egg})
+	(if (every? (get-in state [:adventurer :inventory]) #{:prepared-vegetables :cracked-egg :bowl})
 	
 		(if (= (get-in state [:adventurer :location]) :beat-egg-room) 
 
@@ -403,13 +403,68 @@
 		
 
 		(do
-		   (print "You don't have all the ingredients to beat your eggs.")
+		   (print "You don't have all the ingredients and utensils to beat your eggs.")
 		   state
 		)
 	
 	)
 
 )
+
+
+
+(defn cook-egg [state]
+	;need beat-egg in kitchen -> omelette
+	(if (every? (get-in state [:adventurer :inventory]) #{:beat-egg})
+		(if (= (get-in state [:adventurer :location]) :kitchen) 
+			(do
+				(print "You now have an OMELETTE!")	  
+				(update-in (update-in state [:adventurer :inventory] #(disj % :beat-egg)) [:adventurer :inventory] #(conj % :omelette))
+			)
+
+			(do
+				(print "You are not in the right room to cook your eggs.")
+				state
+			)
+		)
+		
+		(do
+		   (print "You don't have all the ingredients to cook your eggs.")
+		   state
+		)
+	)
+)
+
+(defn eat-egg [state]
+
+	;need omolette fork in dining room -> then set staus to won!
+
+	(if (every? (get-in state [:adventurer :inventory]) #{:cooked-egg :fork :bowl})
+	
+		(if (= (get-in state [:adventurer :location]) :dining-room) 
+
+			(do
+				(print "You now won the game!")
+				(assoc-in state [:adventurer :status] :won)
+			)
+
+			(do
+				(print "You are not in the right room to eat your eggs.")
+				state
+			)
+
+		)
+		
+
+		(do
+		   (print "You don't have all the ingredients and utensils to eat your eggs.")
+		   state
+		)
+	
+	)
+
+)
+
   
 (def initial-env [  
 					; [:move "@"] go
@@ -428,9 +483,9 @@
 					[:inventory] display-inventory
 					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
 					[:prepare :vegetables] prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
-					[:beat :egg] beat-egg ; need cracked-egg in beat-egg-room -> beat-egg
-					; [:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
-					; [:eat :egg] eat-egg ; need omolette bowl fork in dining room -> then set staus to won!
+					[:beat :egg] beat-egg ; need bowl cracked-egg in beat-egg-room -> beat-egg
+					[:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
+					[:eat :egg] eat-egg ; need omolette fork in dining room -> then set staus to won!
 					; [:pet :chicken] pet-chicken ; adds eggs to your inventory
 
                   ])  ;; add your other functions here
