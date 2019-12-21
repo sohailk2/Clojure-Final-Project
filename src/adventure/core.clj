@@ -115,7 +115,9 @@
    :seen #{}
    :suspicion 0
    :eggs-recieved 0
+   :status :alive
    })
+
 
 
 ; movement code
@@ -142,11 +144,14 @@
     ;   (if (every? (get-in state [:adventurer :inventory]) (get-in state [:map dest :requires]) ) 
       (do
         (println "\nYou CAN go that way.")
-        (assoc-in state [:adventurer :location] dest)
-		(assoc-in state [:adventurer :suspicion] (+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) ;adventurer->suspicion = adventurer->suspicion + room->suspicion
-		(assoc-in state [:adventurer :tick] (+ (get-in state [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
-		(assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
-	  	state
+		(print dest)
+        
+		 ;adventurer->suspicion = adventurer->suspicion + room->suspicion
+		(assoc-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick] (+ (get-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
+		; (assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
+	  	
+
+		
 		;TODO check if suspicion is too high
 	  )
 	)
@@ -249,26 +254,239 @@
     )
   )
 )
+
+(defn describeDirections [state]
+
+	(let [directions (get-in state [:map (get-in state [:adventurer :location]) :dir])]
+		(print directions)
+		state
+	)
+
+)
+
+(defn pick-up [state object]
+
+	; if object is in the current rooms things then pick it up
+	(let [objectsInRoom (get-in state [:map (get-in state [:adventurer :location]) :contents])]
+		(if (contains? objectsInRoom object)
+		
+			(do 
+				(print object " has been picked up!")
+				(update-in state [:adventurer :inventory] #(conj % object))
+			)
+
+			(do
+				(print "This object can not be picked up.")			
+				state
+			)
+
+		)
+	)
+)
+
+(defn display-inventory [state]
+
+	(do 
+		(print "Inventory: " (get-in state [:adventurer :inventory]))
+		state
+	)
+
+)
+
+(defn drop [state object]
+
+	(let [objectsInInventory (get-in state [:adventurer :inventory])]
+		(if (contains? objectsInInventory object)
+		
+			(do 
+				(print object " has been dropped from the inventory.")
+				(update-in state [:adventurer :inventory] #(disj % object))
+			)
+
+			(do
+				(print "This object is not in your inventory. Not dropped")			
+				state
+			)
+
+		)
+	)	
+
+)
+
+(defn crack-egg [state]
+
+	; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
+
+	
+	(if (= (get-in state [:adventurer :location]) :crack-egg-room) 
+
+		(if (contains? (get-in state [:adventurer :inventory]) :raw-egg)
+
+			
+
+				(do
+					(print "Raw eggs have turned into cracked eggs. ")
+					;raw-egg -> cracked egg
+					(update-in (update-in state [:adventurer :inventory] #(disj % :raw-egg)) [:adventurer :inventory] #(conj % :cracked-egg))
+				)
+
+				(do
+				
+					(print "You do not have any raw eggs to crack.")
+					state
+				)
+
+			
+
+		)
+
+		(do 
+			(print "You are not in the right room to crack an egg.")
+			state
+		)
+	
+	)
+
+
+)
+
+(defn prepare-vegetables [state]
+
+	;prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
+
+	(if (every? (get-in state [:adventurer :inventory]) #{:cilantro :tomato :onion})
+	
+		(if (= (get-in state [:adventurer :location]) :preperation-room) 
+
+			(do
+				(print "You now have prepared vegetables.")	  
+				(update-in (update-in state [:adventurer :inventory] #(disj % :cilantro :tomato :onion)) [:adventurer :inventory] #(conj % :prepared-vegetables))
+			)
+
+			(do
+				(print "You are not in the right room to prepare your vegetables.")
+				state
+			)
+
+		)
+		
+
+		(do
+		   (print "You don't have all the vegetables required to make prepared vegetables.")
+		   state
+		)
+	
+	)
+
+)
+
+
+(defn beat-egg [state]
+
+	;need beat-egg and prepared-vegetables in kitchen -> omelette
+
+	(if (every? (get-in state [:adventurer :inventory]) #{:prepared-vegetables :cracked-egg :bowl})
+	
+		(if (= (get-in state [:adventurer :location]) :beat-egg-room) 
+
+			(do
+				(print "You now have beat eggs.")	  
+				(update-in (update-in state [:adventurer :inventory] #(disj % :prepared-vegetables :cracked-egg)) [:adventurer :inventory] #(conj % :beat-egg))
+			)
+
+			(do
+				(print "You are not in the right room to beat your eggs.")
+				state
+			)
+
+		)
+		
+
+		(do
+		   (print "You don't have all the ingredients and utensils to beat your eggs.")
+		   state
+		)
+	
+	)
+
+)
+
+
+
+(defn cook-egg [state]
+	;need beat-egg in kitchen -> omelette
+	(if (every? (get-in state [:adventurer :inventory]) #{:beat-egg})
+		(if (= (get-in state [:adventurer :location]) :kitchen) 
+			(do
+				(print "You now have an OMELETTE!")	  
+				(update-in (update-in state [:adventurer :inventory] #(disj % :beat-egg)) [:adventurer :inventory] #(conj % :omelette))
+			)
+
+			(do
+				(print "You are not in the right room to cook your eggs.")
+				state
+			)
+		)
+		
+		(do
+		   (print "You don't have all the ingredients to cook your eggs.")
+		   state
+		)
+	)
+)
+
+(defn eat-egg [state]
+
+	;need omolette fork in dining room -> then set staus to won!
+
+	(if (every? (get-in state [:adventurer :inventory]) #{:cooked-egg :fork :bowl})
+	
+		(if (= (get-in state [:adventurer :location]) :dining-room) 
+
+			(do
+				(print "You now won the game!")
+				(assoc-in state [:adventurer :status] :won)
+			)
+
+			(do
+				(print "You are not in the right room to eat your eggs.")
+				state
+			)
+
+		)
+		
+
+		(do
+		   (print "You don't have all the ingredients and utensils to eat your eggs.")
+		   state
+		)
+	
+	)
+
+)
+
   
-(def initial-env [ 	[:move "@"] go
-					["@"] go ;TODO n vs north vs go north
+(def initial-env [  
+					; [:move "@"] go
+					; ["@"] go ;TODO n vs north vs go north
 					[:go "@"] go 
                     [:describe] describeState
+					[:directions] describeDirections
                     [:describe "@"] describeObject 
                     [:no-understand] no-understand
 					[:take "@"] pick-up
 					[:drop "@"] drop
 					[:look] describeState
-					[:examine "@"] describeObject
-					[:quit] quit
+					; [:examine "@"] describeObject
+					; [:quit] quit
 					[:i] display-inventory
 					[:inventory] display-inventory
-					[:crack :egg] crack-egg
-					[:prepare :vegetables] prepare-vegetables
-					[:beat :egg] beat-egg
-					[:cook :egg] cook-egg
-					[:eat :egg] eat-egg
-					[:pet :chicken] pet-chicken ;TODO do we need this function
+					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
+					[:prepare :vegetables] prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
+					[:beat :egg] beat-egg ; need bowl cracked-egg in beat-egg-room -> beat-egg
+					[:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
+					[:eat :egg] eat-egg ; need omolette fork in dining room -> then set staus to won!
+					; [:pet :chicken] pet-chicken ; adds eggs to your inventory
 
                   ])  ;; add your other functions here
 					
@@ -301,14 +519,28 @@
   (loop [local-state {:map init-map :adventurer init-adventurer :items init-items}]
   
   
+	; restucture the print ln and move to a do loop with the recur so that you 
     (let [pl (status local-state) 
           _  (println "\nWhat do you want to do?")
           command (read-line)]
 
           (do 
           ; (print ( (get-in local-state [:map (get-in local-state [:adventurer :location]) :dir]) :north) )
-          ; (recur (go local-state (canonicalize command)))          
-          (recur (react local-state (canonicalize command)))
+          ; (recur (go local-state (canonicalize command))) 
+		
+			(if (= (get-in local-state [:adventurer :status]) :dead)
+
+				(print "THE GAME IS OVER. YOU DIED / EXITED.")
+
+				(if (= (get-in local-state [:adventurer :status]) :won) 
+					(print "YOU WON")
+					(recur (react local-state (canonicalize command)))
+
+				)
+
+			)
+
+           
 
           )
     )
