@@ -349,6 +349,35 @@
 
 )
 
+(defn prepare-vegetables [state]
+
+	;prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
+
+	(if (every? (get-in state [:adventurer :items]) #{:cilantro :tomato :onion})
+	
+		( if (= (get-in state [:adventurer :location]) :preparation-room) 
+
+			(do
+				(print "You now have prepared vegetables.")	  
+				(update-in (update-in state [:adventurer :inventory] #(disj % :cilantro :tomato :onion)) [:adventurer :inventory] #(conj % :prepared-vegetables))
+			)
+
+			(do
+				(print "You are not in the right room to prepare your vegetables.")
+				state
+			)
+
+		)
+		
+
+		(do
+		   (print "You don't have all the vegetables required to make prepared vegetables.")
+		   state
+		)
+	
+	)
+
+)
   
 (def initial-env [  
 					; [:move "@"] go
@@ -366,11 +395,11 @@
 					[:i] display-inventory
 					[:inventory] display-inventory
 					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
-					; [:prepare :vegetables] prepare-vegetables
-					; [:beat :egg] beat-egg
-					; [:cook :egg] cook-egg
-					; [:eat :egg] eat-egg
-					; [:pet :chicken] pet-chicken ;TODO do we need this function
+					[:prepare :vegetables] ;prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
+					; [:beat :egg] beat-egg ; need cracked-egg in beat-egg-room -> beat-egg
+					; [:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
+					; [:eat :egg] eat-egg ; need omolette bowl fork in dining room -> then set staus to won!
+					; [:pet :chicken] pet-chicken ; adds eggs to your inventory
 
                   ])  ;; add your other functions here
 
