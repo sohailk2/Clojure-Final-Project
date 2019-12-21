@@ -317,9 +317,10 @@
 
 	; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
 
+	
 	(if (= (get-in state [:adventurer :location]) :crack-egg-room) 
 
-		( if (contains? (get-in state [:adventurer :inventory]) :raw-egg)
+		(if (contains? (get-in state [:adventurer :inventory]) :raw-egg)
 
 			
 
@@ -353,9 +354,9 @@
 
 	;prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
 
-	(if (every? (get-in state [:adventurer :items]) #{:cilantro :tomato :onion})
+	(if (every? (get-in state [:adventurer :inventory]) #{:cilantro :tomato :onion})
 	
-		( if (= (get-in state [:adventurer :location]) :preparation-room) 
+		(if (= (get-in state [:adventurer :location]) :preperation-room) 
 
 			(do
 				(print "You now have prepared vegetables.")	  
@@ -395,7 +396,7 @@
 					[:i] display-inventory
 					[:inventory] display-inventory
 					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
-					[:prepare :vegetables] ;prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
+					[:prepare :vegetables] prepare-vegetables ;need vegetables (cilantro tomato onion) in preparation-room turns into prepared-vegetables
 					; [:beat :egg] beat-egg ; need cracked-egg in beat-egg-room -> beat-egg
 					; [:cook :egg] cook-egg ; need beat-egg and prepared-vegetables in kitchen -> omelette
 					; [:eat :egg] eat-egg ; need omolette bowl fork in dining room -> then set staus to won!
