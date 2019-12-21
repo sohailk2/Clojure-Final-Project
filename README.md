@@ -24,11 +24,11 @@ FIXME: listing of options this app accepts.
 
 ## To Do:
 - [x] Describe Room
-- [ ] Take Items
-- [ ] Crack Eggs
 - [x] Add all rooms
 - [ ] Exit function
 - [ ] Create user functions
+- [ ] Take Items
+- [ ] Crack Eggs
 - [ ] Create win condition
 - [ ] Create loss condition
 - [ ] Make sure go works

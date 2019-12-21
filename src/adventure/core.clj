@@ -1,7 +1,8 @@
 (ns adventure.core
   (:gen-class))
 (require '[clojure.string :as str])
-(use '[clojure.string :only (split triml)])
+(require 'clojure.string)
+(use '[clojure.string :only (split triml capitalize)])
 
 (def init-map
 	{
@@ -112,7 +113,7 @@
   {:location :pen
    :inventory #{}
    :tick 0
-   :seen #{}
+   :seen #{:pen}
    :suspicion 0
    :eggs-recieved 0
    :status :alive
@@ -138,27 +139,34 @@
         dest ((get-in state [:map location :dir]) dir )]
     (if (nil? dest)
       (do (println "\nYou can't go that way.")
+	  	; (println state)
           ; (println dir)
           state)
 
     ;   (if (every? (get-in state [:adventurer :inventory]) (get-in state [:map dest :requires]) ) 
       (do
         (println "\nYou CAN go that way.")
-		(print dest)
+		(print (capitalize (name dest)))
         
 		 ;adventurer->suspicion = adventurer->suspicion + room->suspicion
-		(assoc-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick] (+ (get-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
+		(assoc-in
+			(assoc-in 
+				(assoc-in 
+					(assoc-in state [:adventurer :location] dest) 
+					[:adventurer :suspicion] 
+					(+ (get-in state [:adventurer :suspicion]) (get-in state [:map dest :suspicion]))) 
+				[:adventurer :tick] 
+				(+ (get-in state [:adventurer :tick]) 1))
+			[:adventurer :seen]
+			(conj (get-in state [:adventurer :seen]) dest)) 
+		
+		;adventurer->tick = adventurer->tick + 1
 		; (assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
 	  	
 
 		
 		;TODO check if suspicion is too high
-	  )
-	)
-
-        ; (do (println "You don't have the required objects to go in there.") state) 
-))
-    ;   ))
+))))
 
 
 
@@ -176,10 +184,10 @@
 
   (let [location (get-in state [:adventurer :location])
         the-map (:map state)]
-    (print (str "The objects in the scene are" (-> the-map location :title) ". "))
-    (when-not ((get-in state [:adventurer :seen]) location)
+    (println (str "The objects in the scene are " (-> the-map location :title) ". "))
+    ; (when-not ((get-in state [:adventurer :seen]) location)
       (print (-> the-map location :desc)))
-    (update-in state [:adventurer :seen] #(conj % location)))
+    ; (update-in state [:adventurer :seen] #(conj % location)))
   
   state
 
@@ -272,7 +280,10 @@
 		
 			(do 
 				(print object " has been picked up!")
-				(update-in state [:adventurer :inventory] #(conj % object))
+				(if (= object :raw-egg) 
+					(update-in (update-in state [:adventurer :eggs-recieved] inc) [:adventurer :inventory] #(conj % object))
+					(update-in state [:adventurer :inventory] #(conj % object)))
+				
 			)
 
 			(do
@@ -439,7 +450,7 @@
 
 	;need omolette fork in dining room -> then set staus to won!
 
-	(if (every? (get-in state [:adventurer :inventory]) #{:cooked-egg :fork :bowl})
+	(if (every? (get-in state [:adventurer :inventory]) #{:omelette :fork :bowl})
 	
 		(if (= (get-in state [:adventurer :location]) :dining-room) 
 
@@ -459,11 +470,14 @@
 		(do
 		   (print "You don't have all the ingredients and utensils to eat your eggs.")
 		   state
-		)
-	
-	)
+)))
 
-)
+(defn quit [state]
+	(do
+		(println "You become extremely suspicious. You feel controlled. You look all around you, your mind running at a million-miles-an-hour. Finally you look straight ahead at...well...YOU. You punch the clear glass wall and jump out, only to get blown away into dust like at the end of (SPOILER ALERT!) Avengers: Infinity War.")
+		(println "GAME OVER")
+		(assoc-in state [:adventurer :status] :dead)
+))
 
   
 (def initial-env [  
@@ -477,8 +491,8 @@
 					[:take "@"] pick-up
 					[:drop "@"] drop
 					[:look] describeState
-					; [:examine "@"] describeObject
-					; [:quit] quit
+					[:examine "@"] describeObject
+					[:quit] quit ;TODO	
 					[:i] display-inventory
 					[:inventory] display-inventory
 					[:crack :egg] crack-egg ; if have raw-egg and location crack-egg-room then raw-egg -> cracked egg
@@ -538,15 +552,7 @@
 
 				)
 
-			)
-
-           
-
-          )
-    )
-
-  )
-)
+)))))
 
 
 
