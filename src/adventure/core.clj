@@ -149,7 +149,7 @@
 		(assoc-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick] (+ (get-in (assoc-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion] (+ (get-in (assoc-in state [:adventurer :location] dest) [:adventurer :suspicion]) (get-in (assoc-in state [:adventurer :location] dest) [:map dest :suspicion]))) [:adventurer :tick]) 1)) ;adventurer->tick = adventurer->tick + 1
 		; (assoc-in state [:adventurer :seen] (conj (get-in state [:adventure :seen]) dest)) ;adventurer->seen = adventurer->seen + dest
 	  	
-
+		
 		
 		;TODO check if suspicion is too high
 	  )
