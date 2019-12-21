@@ -211,10 +211,8 @@
 
   (let [location (get-in state [:adventurer :location])
         the-map (:map state)]
-    (println (str "The objects in the scene are " (-> the-map location :title) ". "))
-    ; (when-not ((get-in state [:adventurer :seen]) location)
-      (print (-> the-map location :desc)))
-    ; (update-in state [:adventurer :seen] #(conj % location)))
+    (println (str "The objects in the scene are " (-> the-map location :contents) ". "))
+    (print (-> the-map location :desc)))
   
   state
 
