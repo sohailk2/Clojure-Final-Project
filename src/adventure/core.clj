@@ -480,11 +480,13 @@
 		   (print "You don't have all the ingredients and utensils to eat your eggs.")
 		   state
 )))
+  
 
   
 (def initial-env [  
 					; [:move "@"] go
 					; ["@"] go ;TODO n vs north vs go north
+					[:help] help
 					[:go "@"] go 
                     [:describe] describeState
 					[:directions] describeDirections
@@ -506,6 +508,22 @@
 
                   ])  ;; add your other functions here
 					
+
+(defn help
+	(do 
+		(println "You can do any of the following. \n Replace @ with the relevant object. You don't need to type the : before every word")
+		(loop [idx 0]
+			(if (>= idx (count initial-env)) 
+			state
+			(do 
+				(println (initial-env idx))
+				(recur (+ idx 2))
+			)
+			
+    
+    	))
+	)
+)
 
 (defn react
   "Given a state and a canonicalized input vector, search for a matching phrase and call its corresponding action.
