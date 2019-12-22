@@ -24,10 +24,10 @@ However, in doing this you should be careful not to invoke too much suspicion, e
     * Tomato (take, drop, prepare)
     * Bowl (take, drop)
     * Fork (take, drop)
-    * Prepared-Vegetables (beat, drop)
+    * Prepared-Vegetables (beat, drop)  - the vegetables can be transformed into this 
     * Cracked-Egg (beat, drop)
-    * Beat-Egg (cook, drop)
-    * Omellette (eat, drop) -> eating an omellete wins the game
+    * Beat-Egg (cook, drop) - cracked egg can be transformed into this
+    * Omellette (eat, drop)- beat egg can be transformed into this -> eating an omellete wins the game 
 
 * Directions, Supported: (go north, go s, go right, etc...)
     * Cardinal directions and their abbreviations
