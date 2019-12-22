@@ -1,6 +1,9 @@
 # adventure
 
-
+## Partners:
+* sohailk2
+* podar2
+* jaredjl2
 
 ## Description of Game:
 We decided to make an omolette cooking simulator. 
