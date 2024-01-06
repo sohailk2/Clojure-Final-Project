@@ -5,6 +5,13 @@
 * podar2
 * jaredjl2
 
+## Running the game
+To start make sure you have lein installed
+`brew install leiningen`
+
+Then just run the following in the home directory
+`lein run`
+
 ## Description of Game:
 We decided to make an omolette cooking simulator. 
 The purpose of this game is to collect the right ingredients to make an omelette.
@@ -46,9 +53,41 @@ However, in doing this you should be careful not to invoke too much suspicion, e
 
 ...
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+
+## Known bugs
+When in the `Pen` (spawing room), it doesn't mention the `raw-egg` on the ground, but you can still pick it up
+
+## Solution (SPOILER)
+
+This is not the only solution, and may not be the most efficient solution. But it works (in 12 moves). 
+
+```
+pickup raw-egg
+go north
+pickup onion
+pickup cilantro
+pickup tomato
+go south
+go west
+prepare vegetables
+go east
+go south
+go south
+pickup bowl
+pickup fork
+go north
+crack egg
+go east
+beat egg
+go w 
+go n
+go e
+cook egg
+go e
+eat egg
+```
+
+
 
 ## License
 

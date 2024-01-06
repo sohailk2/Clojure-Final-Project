@@ -114,7 +114,7 @@
 
 (def init-adventurer
   {:location :pen
-   :inventory #{:bowl :fork :omelette}
+   :inventory #{} ;; :bowl :fork :omelette
    :tick 0
    :seen #{:pen}
    :suspicion 0
